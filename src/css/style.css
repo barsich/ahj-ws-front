@@ -59,7 +59,7 @@ body {
   padding: 5px 10px;
 }
 
-.name-taken {
+.login-error {
   margin-bottom: 5px;
   color: red;
 }

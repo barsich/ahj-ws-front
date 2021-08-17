@@ -65,10 +65,8 @@ export default class Chat {
       } else if (response.action === 'login') {
         if (response.status) {
           this.login(response.user);
-        } else if (!document.querySelector('.name-taken')) {
-          document
-            .querySelector('.login-form')
-            .insertAdjacentHTML('afterbegin', ChatMarkups.nameTaken());
+        } else {
+          this.showLoginError('Имя занято, используйте другое');
         }
       } else if (response.action === 'message') {
         if (response.status) {
@@ -94,6 +92,15 @@ export default class Chat {
     const input = modal.querySelector('.login-form__input');
     const { value } = input;
     if (!value) {
+      this.showLoginError('Введите имя');
+      return;
+    }
+    if (value.length > 10) {
+      this.showLoginError('Используйте не более 10 символов');
+      return;
+    }
+    if (value === 'Вы') {
+      this.showLoginError('Неа ;)');
       return;
     }
     this.sendRequest({ action: 'login', data: value });
@@ -142,7 +149,10 @@ export default class Chat {
       : (messageBlock = ChatMarkups.messageMarkup(text, user, date));
     this.chatBlock.insertAdjacentHTML('beforeend', messageBlock);
     this.chatBlock.scrollTop = this.chatBlock.scrollHeight;
-    this.messageInput.value = '';
+    // иначе очищается поле ввода при новых сообщениях
+    if (this.user === user) {
+      this.messageInput.value = '';
+    }
   }
 
   reconnect() {
@@ -192,5 +202,15 @@ export default class Chat {
       this.chatBlock.insertAdjacentHTML('beforeend', ChatMarkups.messageMarkup(text, user, date));
       this.chatBlock.scrollTop = this.chatBlock.scrollHeight;
     });
+  }
+
+  showLoginError(error) {
+    const errorField = document.querySelector('.login-error');
+    if (errorField) {
+      errorField.remove();
+    }
+    document
+      .querySelector('.login-form')
+      .insertAdjacentHTML('afterbegin', ChatMarkups.loginError(error));
   }
 }

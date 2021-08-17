@@ -41,9 +41,9 @@ export default class ChatMarkups {
     `;
   }
 
-  static nameTaken() {
+  static loginError(error) {
     return `
-    <p class="name-taken">Имя занято, используйте другое</p>
+    <p class="login-error">${error}</p>
     `;
   }
 
