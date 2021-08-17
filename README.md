@@ -1,1 +1,2 @@
-# ahj-ws
+# ahj-ws-front [![Build status](https://ci.appveyor.com/api/projects/status/ha40jvxegtwst5cg?svg=true)](https://ci.appveyor.com/project/barsich/ahj-ws-front)
+[gh-pages](https://barsich.github.io/ahj-ws-front/)
