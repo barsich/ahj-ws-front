@@ -4,10 +4,10 @@ import ChatMarkups from './ChatMarkups';
 export default class Chat {
   constructor(markups) {
     this.markups = markups;
-    // localhost
-    this.host = 'ws://localhost:7070/ws';
+    // // localhost
+    // this.host = 'ws://localhost:7070/ws';
     // heroku
-    // this.host = 'wss://';
+    this.host = 'wss://ahj-ws-back.herokuapp.com/wss';
 
     this.user = null;
 
