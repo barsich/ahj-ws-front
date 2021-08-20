@@ -37,19 +37,16 @@ export default class Chat {
     this.messageInput.addEventListener('keyup', this.messageRequest);
 
     this.connect();
-
-    // устанавливаем интервал на проверку наличия соединения
-    setInterval(() => {
-      if (this.ws.readyState === WebSocket.CLOSING || this.ws.readyState === WebSocket.CLOSED) {
-        this.reconnect();
-      }
-    }, 5000);
   }
 
   connect() {
     this.ws = new WebSocket(this.host);
     this.ws.addEventListener('open', () => {
       console.log('connected');
+      // для реконнекта
+      if (this.user) {
+        this.sendRequest({ action: 'login', data: this.user });
+      }
     });
 
     this.ws.addEventListener('message', (event) => {
@@ -79,6 +76,7 @@ export default class Chat {
 
     this.ws.addEventListener('close', (event) => {
       console.log('connection closed', event);
+      this.reconnect();
     });
 
     this.ws.addEventListener('error', () => {
@@ -133,7 +131,10 @@ export default class Chat {
 
   login(user) {
     this.user = user;
-    document.querySelector('.modal').remove();
+    const modal = document.querySelector('.modal');
+    if (modal) {
+      modal.remove();
+    }
     this.usersBlock.style.filter = '';
     this.chatBlock.style.filter = '';
     this.messageInput.style.filter = '';
@@ -194,12 +195,21 @@ export default class Chat {
   }
 
   renderMessages(messages) {
-    if (messages.length === 0 || this.chatBlock.children.length !== 0) {
+    if (messages.length === 0) {
       return;
     }
+
+    const chatMessages = [...document.querySelectorAll('.chat-message')];
+    if (chatMessages.length > 0) {
+      chatMessages.forEach((item) => item.remove());
+    }
+
     messages.forEach((message) => {
       const { user, text, date } = message;
-      this.chatBlock.insertAdjacentHTML('beforeend', ChatMarkups.messageMarkup(text, user, date));
+      // eslint-disable-next-line no-unused-expressions
+      this.user === user
+        ? this.chatBlock.insertAdjacentHTML('beforeend', ChatMarkups.messageMarkup(text, 'Вы', date))
+        : this.chatBlock.insertAdjacentHTML('beforeend', ChatMarkups.messageMarkup(text, user, date));
       this.chatBlock.scrollTop = this.chatBlock.scrollHeight;
     });
   }
